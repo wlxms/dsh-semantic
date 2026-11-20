@@ -1,0 +1,4 @@
+# dsh-semantic bundle patch: inserts the semantic host/client plugin row.
+- insert:
+    - id: semantic
+      name: 'dsh-semantic'
