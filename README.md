@@ -52,3 +52,13 @@ DSH 0.1.5 exposes `remote.workspaceFiles.readAll` but not the newer `readBytes` 
 - the semantic diagnostics tab lists errors/warnings.
 
 On DSH versions compatible with dsh-monaco (>=0.2.2), install the matching Monaco version and the same client paints markers.
+
+## Latest DSH compatibility (0.2.2)
+
+DSH 0.2.2 introduced `workspaceFileScope` typert lookups for document preview. In migrated profiles the provider can fail with:
+
+```text
+typert gateway: workspaceFiles/stat: lookup provider "workspaceFileScope" did not resolve the requested identity
+```
+
+`dsh-semantic` now exposes `/semantic/stat` and `/semantic/file` (session cwd or absolute path) and the client proxies `workspaceFiles.stat`, `readAll`, and `readBytes` through them. This keeps both the native document preview and dsh-monaco usable on the latest runtime, including relative sidebar paths.
