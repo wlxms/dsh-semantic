@@ -24,7 +24,7 @@ Configured in `lib/lsp.js`:
 |---|---|---|
 | TypeScript/JavaScript | `typescript-language-server --stdio` | uses the plugin's bundled `typescript@5.9.3` through `initializationOptions.tsserver.path` |
 | Python | `pyright-langserver --stdio` | optional |
-| C# | `csharp-ls` | requires an MSBuild-capable .NET setup; csharp-ls 0.14 is known to fail with `No instances of MSBuild could be detected` |
+| C# | `csharp-ls` | tested with 0.28.0 + a `.csproj`; Unity workspaces without a generated solution have no project for csharp-ls, so they fall back to text resolution |
 
 The workspace language is detected from `.sln/.csproj/.uproject`, `pyproject.toml/requirements.txt`, or `package.json/tsconfig.json`. A failed server is reported in `/semantic/status`; the coderef Host always falls back to evidence/text resolution.
 
