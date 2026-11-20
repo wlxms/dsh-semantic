@@ -43,3 +43,12 @@ The test builds a temporary TypeScript project, starts the bundled LSP server, c
 ## Dependencies
 
 `vscode-jsonrpc`, `vscode-languageserver-protocol`, and `typescript` (for `typescript-language-server`'s tsserver). The LSP client design follows `dsh-lsp-diagnostics` (MIT) and adds the navigation/workspace-symbol operations it does not expose.
+
+## Monaco compatibility note
+
+DSH 0.1.5 exposes `remote.workspaceFiles.readAll` but not the newer `readBytes` method used by `@dsh-plugin/dsh-monaco@0.0.1`; the viewer can remain at `正在读取…`. This plugin installs a `readBytes -> readAll` compatibility shim, but the 0.0.1 viewer still requires a newer DSH document-preview runtime. On that DSH line the recommended setup is:
+
+- do not bundle dsh-monaco; native sidebar preview renders the file;
+- the semantic diagnostics tab lists errors/warnings.
+
+On DSH versions compatible with dsh-monaco (>=0.2.2), install the matching Monaco version and the same client paints markers.
