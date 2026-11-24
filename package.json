@@ -32,8 +32,7 @@
   "files": [
     "lib/**/*.js",
     "cordis.patch.yml",
-    "README.md",
-    "STATUSBAR.md"
+    "README.md"
   ],
   "license": "MIT"
 }
