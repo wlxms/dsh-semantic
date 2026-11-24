@@ -28,6 +28,28 @@ Configured in `lib/lsp.js`:
 
 The workspace language is detected from `.sln/.csproj/.uproject`, `pyproject.toml/requirements.txt`, or `package.json/tsconfig.json`. A failed server is reported in `/semantic/status`; the coderef Host always falls back to evidence/text resolution.
 
+## Analyzer / source-generator DLL locks
+
+`csharp-ls` loads Roslyn analyzers and source generators from the workspace and keeps the
+assemblies open for the lifetime of the process. This conflicts with UnrealSharp builds that
+rewrite the same DLLs (`MSB3027` / file-in-use).
+
+The C# server is spawned with a private MSBuild overlay (`CustomAfterMicrosoftCommonTargets`)
+whose target copies every `@(Analyzer)` into
+
+```text
+$DSH_HOME/cache/lsp-analyzer-shadow/<workspace-hash>/
+```
+
+before the design-time build, then rewrites `@(Analyzer)` to the cached paths. `csharp-ls` locks
+the cache copies, while the real generator/analyzer DLLs stay writable for normal builds.
+
+- Normal MSBuild invocations are unaffected; the overlay is only in the LSP child environment.
+- The cache is reused across LSP restarts and refreshed from the workspace on each load.
+- Set `DSH_LSP_NO_ANALYZER_SHADOW=1` to disable the overlay if a generator misbehaves.
+- Source-generator dependency DLLs that are not themselves `@(Analyzer)` items are still loaded
+  from their original locations; only the analyzer assemblies themselves are shadow-copied.
+
 ## Security
 
 Browser routes accept only same-origin/loopback requests. A `sessionId` is resolved to `ctx.sessions.get(sessionId).header.cwd`; the Host does not trust a client-supplied root for browser calls. Internal Host consumers may pass an absolute root through `ctx.semantic`.
